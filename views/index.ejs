@@ -1,0 +1,396 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+            <!-- 引入 Bootstrap --> 
+        <script src="js/jquery-1.11.3.min.js"></script> 
+        <link href="/bootstrap/3.3.6/bootstrap.min.css" rel="stylesheet" />
+        <script src="js/bootstrap.js"></script>  
+        <script src="js/vue.js"></script> 
+        <script src="js/xinjian.js"></script>
+        <link href="css/style.css" rel="stylesheet" />
+    </head>
+    <style>
+
+
+            .bgDiv{
+                position:absolute;
+                z-index:-1;
+                width:100%;
+                height:100%;
+                top:0px;
+                left:0px;
+            }
+            </style>
+    <body>
+         <!--背景图片开始-->
+		<div class="bgDiv"id="bgdiv">
+                <img src="images/bg.jpg" width="100%" height="100%">
+            </div>
+            <!--背景图片结束-->
+        <div class="container">
+                <div id="all" onclick="hide()"></div>
+               
+            <!--head开始-->
+            <div>
+             <nav class="navbar navbar-default navbar-fixed-top"><!--.navbar-inverse反色.navbar-default默认灰色.navbar-fixed-top固定在顶部-->
+                        <div class="container">
+                        <div class="navbar-header">
+                            
+                            <!--登录图标开始-->
+                            <div>
+                            <a href="#myModal" class="navbar-brand" >
+                                <span class="glyphicon glyphicon-home"></span>
+                            </a>
+                            
+                            </div>
+                            <!--登录图标结束-->
+                            
+                            
+                            <button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mynavbar"><!--汉堡菜单-->
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        
+                        
+                        
+                        </div>
+                        <div id="mynavbar" class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="">任务管理</a></li>
+                            <li class="active"><a href="">今日任务</a></li>
+                            <li><a href="">本周任务</a></li>
+                            <li><a href="">本月任务</a></li>
+                            <li><a href="">年度任务</a></li>
+                            <li class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown">
+                                    以往任务<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>上周任务</li>
+                                    <li>上月任务</li>
+                                    <li>去年任务</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                                <a class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-cog"  style="font-size:20px;top:15px"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li id="changebgcolor"><span class="glyphicon glyphicon-text-background">更改主题</span></li>
+                                    <li><span class="glyphicon glyphicon-user">退出登陆</span></li>
+                                </ul>
+                        </ul>
+                        <form class="navbar-form navbar-right" method="post" action="/search" onsubmit="return search_check()">
+                                <div class="form-group">
+                                  <input  name="search" id="search" type="text" class="form-control" placeholder="Search">
+                                </div>
+                                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+                        </form>
+                       
+                        </div>
+            </nav>
+            </div>
+            <!--head结束-->
+
+            <!--body开始-->
+            <div>
+                <!--js分页标签页开始-->
+
+                <div>
+                <!-- Nav tabs -->
+                <div class="col-md-2">
+                            清单列表
+                <ul class="nav nav-tabs nav-stacked">
+                    
+                    <%for(let i=0;i<lists.length;i++){ %>
+                    <li style="padding: 10px 15px;border: 1px solid #ddd;border-radius:4px 0 0 4px;">
+                        <span>
+                            <a href="/index?list=<%=lists[i].id %>" class="glyphicon glyphicon-tasks glyphicon "  >&nbsp;&nbsp;<%=lists[i].title %></a>
+                            <span class="glyphicon glyphicon-trash right_icon" onclick="deleteList(<%=lists[i].id %>)"></span>
+                        </span>
+
+                    </li>
+                    <%} %>
+                    
+                </ul>
+                <ul>
+                        <li style="list-style:none">
+                                &nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;
+                                <!--添加清单按钮开始-->
+                               
+                                            
+                                        <span class="glyphicon glyphicon-plus plus" data-toggle="modal" data-target="#myModal"  ></span>
+                                
+                                <!--添加清单按钮结束-->
+                            
+
+                                <div class="modal fade" id="myModal" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                    <h4 class="modal-title" id="myModalLabel">新建清单</h4>
+                                                </div>
+
+                                                <div>
+                                                    <form method="post" action="/addList" onsubmit="return small_check()"style="padding:15px">
+                                                        
+                                                        <input type="text" class="form-control" name="listName" id="listName" style="width: 300px; float: left; margin-right: 20px;" placeholder="请输入新建的列表名" />   
+                                                        <button type="submit" class="btn btn-primary">提交</button>
+                                                    </form>
+                                                 </div>
+                                                 
+                                                  
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div>
+                        
+                                
+                        </li>
+                </ul>
+                </div>
+                <!-- Tab panes -->
+                <div class="col-md-10">
+                <div class="tab-content">
+                       
+                    <div class="tab-pane fade in active">
+                            
+                            <span class="label label-primary">待完成</span>
+                            <table class="table table-hover " id="tab1">
+                                <tbody>
+                            <%if(contents.length == 0){ %>
+                                
+                                <div class="radio" style="color: dodgerblue; padding-top: 14px;" onclick="show()">
+                                    <span class="glyphicon glyphicon-console"></span>&nbsp;&nbsp; 没有任务，放松一下
+                                </div>
+                           
+                                <%} else{ for(let i=0;i<contents.length;i++){ %>
+                                    
+                                <div  class="radio">
+                                    <label>
+                                    <!--已完成按钮开始-->
+                                    
+                                    <input type="checkbox"class="ck" >
+                                       
+                                    <!--已完成按钮结束-->
+                                        
+                                            
+                                            
+                                            &nbsp;&nbsp;
+                                            <%
+                                                var color = "greenyellow";
+                                                var content = "一般";
+                                                if(contents[i].urgent == 2){
+                                                    color = "orange";
+                                                    content = "重要";
+                                                }else if(contents[i].urgent == 3){
+                                                    color = "red";
+                                                    content = "很重要";
+                                                }
+                                             %>
+                                        <%=contents[i].title %>【<span style="color: <%=color %>;"><%=content %></span>】&nbsp;&nbsp;
+
+                                            <span class="glyphicon glyphicon-list-alt ">&nbsp;<%=contents[i].time %></span>
+                                    <!--删除按钮开始-->
+                                    
+                                    <button type="button"  class="btn btn-default del"  name="thing<%=i %>"
+                                            <%if(list_flag != 3){ %> onclick="del(<%=contents[i].id %>,<%=list_flag %>)" <%}else{ %> 
+                                                onclick="remove(<%=contents[i].id %>,<%=list_flag %>)" <%} %> value="option1">
+                                                <span class="glyphicon glyphicon glyphicon-trash"></span>
+                                    </button>
+                                   
+                                
+                                    <!--删除按钮结束-->
+                                        
+                                    </label>
+                                </div>
+                            
+                                <%}} %>
+                                <%if(list_flag != 3 && list_flag != -1){ %>
+                                <div class="radio" style="color: dodgerblue; padding-top: 14px;" onclick="show('xinjian')">
+                                    <span class="glyphicon glyphicon-plus"></span>&nbsp;&nbsp; 添加待办事项
+                                </div>
+                                <%} %>
+                            </tbody>
+                            </table>
+                            <!--已完成按钮开始-->
+                            <div class="tooltip-demo"  style="text-align:center">
+                                    <button class="btn btn-warning btn-block" id="finishedbtn" data-toggle="tooltip" data-placement="bottom" title="选择是否完成后点此按钮">
+                                        <span class="glyphicon glyphicon-check"></span>
+                                    </button>
+                                </div>
+                                <!--已完成按钮结束-->
+                            <div id="finished">
+                                    <span class="label label-default">已完成</span>
+                                    <table class="table table-hover " id="tab2">
+                                    
+                                            <!--<thead></thead>-->
+                                            <tbody>
+                                                    
+                                            </tbody>
+                                            
+                                    </table>
+                                    
+                                    
+                            </div>
+                            <!--添加任务按钮开始-->
+                            <div class="dropup" style="text-align: right">
+                                <a class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="glyphicon glyphicon-option-horizontal plus" ></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-right">
+                                        <li><span class="glyphicon glyphicon-plus" id="addtaskbtn">添加任务</span></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><span class="glyphicon glyphicon-search" id="searchinputbtn">搜索任务</span></li>
+                                        <li role="separator" class="divider"></li>
+                
+                                        <li><span class="glyphicon glyphicon-sort">排序</span></li>
+                                            <ul style="list-style-type: none">
+                                                <li><span class="glyphicon glyphicon-tim">按时间排序</span></li>
+                                                <li>按优先级排序</li>
+                                            </ul>
+                                        
+                                        <li role="separator" class="divider"></li>
+                
+                                        <li><span class="glyphicon glyphicon-eye-open" id="show">显示已完成</span></li>
+                                        
+                                        <li><span class="glyphicon glyphicon-eye-close" id="hide">隐藏已完成</span></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><span class="glyphicon glyphicon-pencil">编辑多个任务</span></li>
+                                        
+                                </ul>
+                                
+                        </div>
+                        <!--添加任务按钮结束-->
+                        
+
+                                <!--新建事件页面开始-->
+			    <div id="xinjian">
+                    
+                    <form class="form-horizontal" method="post" action="/addThing?list=<%=list_flag %>" onsubmit="return check()">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label"></label>
+                            <div class="col-sm-10 input" id="tip" style="color: red;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">标题</label>
+                            <div class="col-sm-10 input">
+                                <input type="text" class="form-control" id="title" name="title" placeholder="请输入标题">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">备注</label>
+                            <div class="col-sm-10 input">
+                                <input type="text" class="form-control" id="message" name="message" placeholder="请输入备注">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">时间</label>
+                            <div class="col-sm-10 time">
+                                <input type="text" class="form-control" id="year" name="year" placeholder="年">
+                            </div>
+                            <div class="col-sm-10 time">
+                                <input type="text" class="form-control" id="month" name="month" placeholder="月">
+                            </div>
+                            <div class="col-sm-10 time">
+                                <input type="text" class="form-control" id="day" name="day" placeholder="日">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">急缓</label>
+                            <div class="col-sm-10">
+                                <label class="radio-inline">
+                                  <input type="radio" name="urgent" value="1" checked="checked"> 一般
+                                </label>
+                                <label class="radio-inline">
+                                  <input type="radio" name="urgent" value="2"> 重要
+                                </label>
+                                <label class="radio-inline">
+                                  <input type="radio" name="urgent" value="3"> 很重要
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-primary">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            
+                      <!--新建事件页面结束-->          
+                    
+                    
+                    
+                    </div>
+                </div>
+                </div>
+                
+            
+                </div>
+                <!--js分页标签页结束-->
+                <div class="col-md-1 col-md-offset-11">
+                        <!--回到顶部开始-->
+                        <div class="top">
+                            <span class="glyphicon glyphicon-menu-up">
+    
+                            </span>
+                        </div>
+                        <!--回到顶部结束-->
+                    </div>
+                
+            </div>
+            <!--body结束-->
+            <!--foot开始-->
+            <div>
+
+            </div>
+            <!--body结束-->
+        </div>
+    </body>
+
+    <script>
+            $(window).scroll(function(){
+                $('.top').show();
+                if($(window).scrollTop()<=100){
+                    $('.top').hide();
+                }
+            })
+            $('.top').click(function(){
+                $(window).scrollTop(0);
+                
+            })
+    </script>
+    <script>
+            $('#show').click(function(){
+                $('#finished').show(1000);
+            })
+            $('#hide').click(function(){
+                $('#finished').hide(1000);
+                
+            })
+            $('#changebgcolor').click(function(){
+              $("#bgdiv").hide(1000);
+            })
+    </script>
+    <script>
+        $(function(){
+            $("#finishedbtn").click(function(){
+                var cks = $(".ck:checked");
+                $.each(cks,function(i,ck){
+                    $("#tab2").append($(ck).parent());
+                });
+            });
+        });
+                
+    </script>
+    <script>
+        /*工具提示初始化*/
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+        
+    </script>
+</html>
